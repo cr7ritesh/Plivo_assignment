@@ -91,6 +91,34 @@ TEMPLATES = [
     "due date is {date}",
     "appointment on {date}",
     
+    # City templates (more focused)
+    "i live in {city}",
+    "im from {city}",
+    "located in {city}",
+    "im calling from {city}",
+    "i work in {city}",
+    "visiting {city}",
+    "moving to {city}",
+    "traveling to {city}",
+    "arrived in {city}",
+    "based in {city}",
+    "staying in {city}",
+    "heading to {city}",
+    
+    # Location templates (more focused)
+    "my address is {location}",
+    "i live on {location}",
+    "located at {location}",
+    "the office is on {location}",
+    "meet me at {location}",
+    "shipping to {location}",
+    "deliver to {location}",
+    "going to {location}",
+    "at {location}",
+    "on {location}",
+    "near {location}",
+    "by {location}",
+    
     # Mixed templates
     "hi this is {person_name} my number is {phone}",
     "im {person_name} from {city} email me at {email}",
@@ -102,6 +130,12 @@ TEMPLATES = [
     "call {person_name} at {phone} regarding {date} appointment",
     "email {email} or call {phone} for {person_name}",
     "im {person_name} my credit card is {credit_card} expiring {date}",
+    "im {person_name} calling from {city} my number is {phone}",
+    "deliver to {person_name} at {location} in {city}",
+    "send mail to {location} {city}",
+    "{person_name} lives at {location} in {city}",
+    "ship to {city} address is {location}",
+    "office in {city} on {location}",
 ]
 
 def number_to_words(n: int) -> str:
@@ -281,32 +315,23 @@ def generate_dataset(num_examples: int, start_id: int = 0) -> List[Dict]:
 def main():
     random.seed(42)
     
-    # Generate training data (800 examples)
+    # Generate training data (1000 examples - increased from 800)
     print("Generating training data...")
-    train_data = generate_dataset(800, start_id=0)
+    train_data = generate_dataset(1000, start_id=0)
     with open("data/train.jsonl", "w", encoding="utf-8") as f:
         for example in train_data:
             f.write(json.dumps(example) + "\n")
     print(f"Generated {len(train_data)} training examples")
     
-    # Generate dev data (150 examples)
+    # Generate dev data (200 examples - increased from 150)
     print("Generating dev data...")
-    dev_data = generate_dataset(150, start_id=1000)
+    dev_data = generate_dataset(200, start_id=1000)
     with open("data/dev.jsonl", "w", encoding="utf-8") as f:
         for example in dev_data:
             f.write(json.dumps(example) + "\n")
     print(f"Generated {len(dev_data)} dev examples")
     
-    # Generate test data (100 examples, no labels - just keep entities empty for now)
-    print("Generating test data...")
-    test_data = generate_dataset(100, start_id=2000)
-    # Remove labels for test set
-    for example in test_data:
-        example['entities'] = []
-    with open("data/test.jsonl", "w", encoding="utf-8") as f:
-        for example in test_data:
-            f.write(json.dumps(example) + "\n")
-    print(f"Generated {len(test_data)} test examples")
+    # Note: test.jsonl is not modified to preserve existing test data
     
     print("\nSample training example:")
     print(json.dumps(train_data[0], indent=2))

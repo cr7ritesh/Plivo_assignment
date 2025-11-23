@@ -1,0 +1,20 @@
+PII NER Model - Final Metrics
+==============================
+
+Per-Entity F1 Scores:
+---------------------
+PERSON_NAME:  0.951 (95.1%)
+DATE:         0.918 (91.8%)
+LOCATION:     0.829 (82.9%)
+CREDIT_CARD:  0.700 (70.0%)
+CITY:         0.698 (69.8%)
+EMAIL:        0.557 (55.7%)
+PHONE:        0.444 (44.4%)
+
+Overall Span Macro-F1: 0.728 (72.8%)
+PII Precision: 0.763 (76.3%)
+
+Inference Latency:
+------------------
+p50:  7.82 ms
+p95: 14.16 ms

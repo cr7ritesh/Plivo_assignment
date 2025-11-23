@@ -18,7 +18,8 @@
 ## Training Configuration
 
 ### Hyperparameters
-- **Epochs:** 10
+
+- **Epochs:** 22
 - **Batch Size:** 8
 - **Learning Rate:** 3e-5
 - **Optimizer:** AdamW
@@ -27,27 +28,50 @@
 - **Device:** CPU
 
 ### Training Data
-- **Train Set:** 600 examples
-- **Dev Set:** 150 examples
+- **Train Set:** 1000 examples
+- **Dev Set:** 200 examples
 - **Data Characteristics:** Noisy STT (Speech-to-Text) patterns including:
   - Homophones (e.g., "to" vs "too", "their" vs "there")
   - Missing punctuation
   - Inconsistent capitalization
   - Spacing errors
   - Common transcription mistakes
+  - Enhanced templates for CITY and LOCATION entities
+
+### Label Distribution (Training Set)
+- CITY: 325 examples
+- LOCATION: 295 examples
+- PERSON_NAME: 280 examples
+- EMAIL: 130 examples
+- PHONE: 159 examples
+- DATE: 141 examples
+- CREDIT_CARD: 97 examples
 
 ### Training Progress
-```
-Epoch 1  average loss: 2.6232
-Epoch 2  average loss: 1.9436
-Epoch 3  average loss: 1.6237
-Epoch 4  average loss: 1.4032
-Epoch 5  average loss: 1.2444
-Epoch 6  average loss: 1.1283
-Epoch 7  average loss: 1.0493
-Epoch 8  average loss: 0.9844
-Epoch 9  average loss: 0.9390
-Epoch 10 average loss: 0.9274
+
+```text
+Epoch 1  average loss: 2.6490
+Epoch 2  average loss: 2.0380
+Epoch 3  average loss: 1.6093
+Epoch 4  average loss: 1.3176
+Epoch 5  average loss: 1.0926
+Epoch 6  average loss: 0.9342
+Epoch 7  average loss: 0.8137
+Epoch 8  average loss: 0.7262
+Epoch 9  average loss: 0.6502
+Epoch 10 average loss: 0.5958
+Epoch 11 average loss: 0.5458
+Epoch 12 average loss: 0.5208
+Epoch 13 average loss: 0.4893
+Epoch 14 average loss: 0.4667
+Epoch 15 average loss: 0.4442
+Epoch 16 average loss: 0.4295
+Epoch 17 average loss: 0.4187
+Epoch 18 average loss: 0.4094
+Epoch 19 average loss: 0.3975
+Epoch 20 average loss: 0.3937
+Epoch 21 average loss: 0.3896
+Epoch 22 average loss: 0.3777
 ```
 
 ## Performance Metrics
@@ -56,43 +80,44 @@ Epoch 10 average loss: 0.9274
 
 | Entity Type  | Precision | Recall | F1 Score |
 |--------------|-----------|--------|----------|
-| PERSON_NAME  | 0.918     | 0.875  | **0.896** |
-| DATE         | 0.509     | 0.628  | **0.562** |
-| CREDIT_CARD  | 0.457     | 0.615  | **0.525** |
-| EMAIL        | 0.347     | 0.486  | **0.405** |
-| PHONE        | 0.323     | 0.429  | **0.368** |
-| CITY         | 0.000     | 0.000  | **0.000** |
-| LOCATION     | 0.000     | 0.000  | **0.000** |
+| PERSON_NAME  | 0.951     | 0.951  | **0.951** |
+| DATE         | 0.907     | 0.929  | **0.918** |
+| LOCATION     | 0.836     | 0.823  | **0.829** |
+| CREDIT_CARD  | 0.700     | 0.700  | **0.700** |
+| CITY         | 0.725     | 0.673  | **0.698** |
+| EMAIL        | 0.548     | 0.567  | **0.557** |
+| PHONE        | 0.438     | 0.452  | **0.444** |
 
 ### Overall Metrics
-- **Macro-F1:** 0.394
-- **PII-only Precision:** 0.521
-- **PII-only Recall:** 0.631
-- **PII-only F1:** 0.571
 
-### Interpretation
-- **Strong Performance:** PERSON_NAME detection (F1=0.896) shows excellent results
-- **Good Performance:** DATE (F1=0.562) and CREDIT_CARD (F1=0.525) show solid detection
-- **Moderate Performance:** EMAIL (F1=0.405) and PHONE (F1=0.368) need improvement
-- **Poor Performance:** CITY and LOCATION (F1=0.000) require additional training data or model improvements
+- **Macro-F1:** 0.728
+- **PII-only Precision:** 0.763
+- **PII-only Recall:** 0.776
+- **PII-only F1:** 0.769
+- **Non-PII Precision:** 0.795
+- **Non-PII Recall:** 0.761
+- **Non-PII F1:** 0.777
 
 ## Inference Latency
 
 **Test Configuration:**
+
 - Batch Size: 1 (single utterance)
 - Runs: 50
 - Device: CPU
 - Input: Dev set examples
 
 **Results:**
-- **p50 Latency:** 7.11 ms
-- **p95 Latency:** 12.15 ms
+
+- **p50 Latency:** 7.82 ms
+- **p95 Latency:** 14.16 ms
 
 **Status:** ✅ **Meets requirement** (p95 < 20ms)
 
 ## Model Files
 
 All model artifacts are saved in the `out/` directory:
+
 - `config.json` - Model configuration
 - `pytorch_model.bin` - Trained model weights
 - `tokenizer_config.json` - Tokenizer configuration
@@ -102,34 +127,6 @@ All model artifacts are saved in the `out/` directory:
 ## Predictions
 
 Predictions are saved in: `out/dev_pred.json`
+
 - Format: JSON dictionary mapping utterance IDs to lists of detected entities
 - Each entity includes: start position, end position, label, and PII flag
-
-## Key Achievements
-
-1. ✅ Successfully trained a lightweight NER model for PII detection
-2. ✅ Achieved 57.1% F1 score on PII detection (0.571)
-3. ✅ Maintained low latency: p95 = 12.15ms (well under 20ms requirement)
-4. ✅ Excellent PERSON_NAME detection: 89.6% F1 score
-5. ✅ Model handles noisy STT input with realistic transcription errors
-
-## Future Improvements
-
-### To Improve Performance:
-1. **Data Augmentation:** Generate more training examples for CITY and LOCATION
-2. **Model Size:** Test with `distilbert-base-uncased` (larger but still fast)
-3. **Training Duration:** Increase to 15-20 epochs
-4. **Learning Rate Schedule:** Experiment with cosine annealing
-5. **Class Weights:** Apply class balancing for underrepresented entities
-6. **Post-processing:** Add rule-based corrections for common patterns (emails, phones)
-7. **Ensemble:** Combine predictions from multiple models
-
-### To Optimize Latency:
-1. **Model Quantization:** Apply INT8 quantization for faster inference
-2. **ONNX Export:** Convert to ONNX format for optimized runtime
-3. **Batch Processing:** For production, process multiple utterances together
-4. **Model Distillation:** Further compress the model while maintaining accuracy
-
-## Conclusion
-
-The model demonstrates strong performance on PERSON_NAME detection and acceptable performance on most PII types, while maintaining excellent inference speed. The lightweight architecture (bert-tiny) provides a good balance between accuracy and latency, making it suitable for real-time applications.
